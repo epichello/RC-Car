@@ -13,16 +13,17 @@ enum directions : unsigned long
   IR_LEFT = 2590312199,
   IR_FORWARD = 2673870599,
   IR_RIGHT = 2640447239,
-  IR_BACKWARD = 2657158919
+  IR_BACKWARD = 2657158919,
+  IR_STOP = 2540177159
 };
 
 directions ir_sensor_data(directions &data)
 {
   if (IrReceiver.decode())  //checks for ir signal 
   {   
-    //Serial.println(IrReceiver.decodedIRData.decodedRawData, HEX); //print line convers to hex_decimal something like "FF629D"
-    //IrReceiver.printIRResultShort(&Serial); //Protocol e.g sony or samsung
-    //IrReceiver.printIRSendUsage(&Serial); //gives line of code if you wanted an arduino to output the same ir
+    Serial.println(IrReceiver.decodedIRData.decodedRawData); //print line convers to hex_decimal something like "FF629D"
+    // IrReceiver.printIRResultShort(&Serial); //Protocol e.g sony or samsung
+    // IrReceiver.printIRSendUsage(&Serial); //gives line of code if you wanted an arduino to output the same ir
     data = IrReceiver.decodedIRData.decodedRawData;
     IrReceiver.resume(); // Receive the next value
     return directions(data);
@@ -47,20 +48,20 @@ void loop() {
       {
         left_side.run(FORWARD);
         right_side.run(BACKWARD);
-        delay(500);
+        // delay(100);
         ir_data = IR_NONE; 
-        left_side.run(RELEASE);
-        right_side.run(RELEASE);
+        // left_side.run(RELEASE);
+        // right_side.run(RELEASE);
         break;
       }
       case IR_LEFT:
       {
         left_side.run(BACKWARD);
         right_side.run(FORWARD);
-        delay(500);
+        // delay(100);
         ir_data = IR_NONE; 
-        left_side.run(RELEASE);
-        right_side.run(RELEASE);
+        // left_side.run(RELEASE);
+        // right_side.run(RELEASE);
         ir_data = IR_NONE;
         break;
       }
@@ -68,10 +69,10 @@ void loop() {
       {
         left_side.run(FORWARD);
         right_side.run(FORWARD);
-        delay(500);
+        // delay(100);
         ir_data = IR_NONE; 
-        left_side.run(RELEASE);
-        right_side.run(RELEASE);
+        //left_side.run(RELEASE);
+        //right_side.run(RELEASE);
         ir_data = IR_NONE;
         break;
       }
@@ -79,13 +80,19 @@ void loop() {
       {
         left_side.run(BACKWARD);
         right_side.run(BACKWARD);
-        delay(500);
+        // delay(100);
         ir_data = IR_NONE; 
+        // left_side.run(RELEASE);
+        // right_side.run(RELEASE);
+        break;
+      }
+      case IR_STOP:
+      {
         left_side.run(RELEASE);
         right_side.run(RELEASE);
-        break;
+        ir_data = IR_NONE;
       }
     }
   }while(ir_data != IR_OFF);
-  Serial.println("Control disconnected");
+  Serial.println("Control disconnected; press reset to restart");
 }
